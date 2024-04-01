@@ -1,0 +1,41 @@
+---
+- name: Setup firewall on CentOS
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install firewalld on CentOS
+      yum:
+        name: firewalld
+        state: present
+
+    - name: Enable firewalld on CentOS
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: Allow SSH traffic on CentOS
+      command: firewall-cmd --zone=public --add-service=ssh --permanent
+
+    - name: Reload firewalld on CentOS
+      service:
+        name: firewalld
+        state: reloaded
+
+- name: Setup firewall on Ubuntu
+  hosts: localhost
+  connection: local
+  become: yes
+
+  tasks:
+    - name: Install ufw on Ubuntu
+      apt:
+        name: ufw
+        state: present
+
+    - name: Allow SSH traffic on Ubuntu
+      command: ufw allow ssh
+
+    - name: Enable ufw on Ubuntu
+      command: ufw --force enable
